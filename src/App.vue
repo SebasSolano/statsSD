@@ -246,19 +246,19 @@
         </button>
       </div>
       <!-- Sección de ingreso de nombre de usuario -->
-      <div v-if="!userExists" class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Ingresa tu nombre de usuario</h2>
+      <div v-if="!userExists" class="m-auto">
+        <h2 class="text-2xl font-bold mb-4 text-white">Enter your username</h2>
         <input
           v-model="username"
           type="text"
-          placeholder="Nombre de usuario"
+          placeholder="Username"
           class="p-2 w-full rounded bg-gray-700 text-white"
         />
         <button
           @click="saveUsername"
-          class="mt-4 w-full bg-blue-600 p-2 rounded hover:bg-blue-500"
+          class="mt-4 w-full bg-blue-600 p-2 rounded hover:bg-blue-500 text-xl text-white"
         >
-          Guardar
+          Save
         </button>
       </div>
 
@@ -311,7 +311,7 @@
           </div>
         </div>
       </div>
-      <div class="p-1 bg-gray-700 rounded mb-5"></div>
+      <div v-if="userExists" class="p-1 bg-gray-700 rounded mb-5"></div>
 
       <!-- Historial diario -->
       <div v-if="userExists" class="mb-8">
@@ -361,7 +361,7 @@
           </div>
         </div>
       </div>
-      <div class="p-1 bg-gray-700 rounded mb-5"></div>
+      <div v-if="userExists" class="p-1 bg-gray-700 rounded mb-5"></div>
       <!-- Inputs para ingresar datos diarios -->
       <div v-if="userExists" class="mb-8">
         <h2 class="text-xl font-bold mb-4 text-white">Enter Daily Data</h2>
@@ -414,7 +414,7 @@
           Save
         </button>
       </div>
-      <div class="p-1 bg-gray-700 rounded mb-5"></div>
+      <div v-if="userExists" class="p-1 bg-gray-700 rounded mb-5"></div>
       <!-- Historial de ranks en formato de cards -->
       <div v-if="userExists">
         <h2 class="text-xl font-bold mb-4 text-white">Rank History</h2>
