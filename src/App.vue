@@ -1,4 +1,11 @@
 <script setup>
+  /* TODO:
+   * - Optimize code (useVue, lodash, reactive).
+   * - Optimize rank history with useVue.
+   * - Improve global styles.
+   * - Add icons.
+   * - Enhance styles of rank history.
+   */
   import { ref, onMounted } from "vue";
 
   const username = ref("");
@@ -75,6 +82,7 @@
     const store = transaction.objectStore("ranks");
     store.add(rank);
     loadRanks();
+    console.log("data saved: " + store);
   };
 
   const loadRanks = () => {
@@ -197,10 +205,8 @@
         const ranksStore = transaction.objectStore("ranks");
         const userStore = transaction.objectStore("user");
 
-        // Importar datos de usuario
         userStore.put(importedData.user);
 
-        // Importar datos de ranks
         importedData.ranks.forEach((rank) => {
           ranksStore.put(rank);
         });
@@ -402,8 +408,7 @@
           </div>
         </form>
         <button
-          type="submit"
-          :click="saveDailyStats"
+          @click="saveDailyStats"
           class="col-span-2 bg-blue-600 p-2 rounded-full hover:bg-blue-500 text-white text-xl w-full mt-3"
         >
           Save
