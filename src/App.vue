@@ -1,226 +1,3 @@
-<template>
-  <div class="flex justify-center p-10">
-    <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-4xl w-full">
-      <!-- Botones flotantes -->
-      <div class="fixed right-10 top-10 transform -translate-y-1/2 space-x-5">
-        <button
-          @click="exportData"
-          class="bg-red-600 p-2 rounded-xl hover:bg-red-500 text-white w-28"
-        >
-          Exportar
-        </button>
-        <input
-          type="file"
-          id="importFile"
-          ref="fileInput"
-          @change="importData"
-          hidden
-        />
-        <button
-          @click="triggerFileInput"
-          class="bg-green-600 p-2 rounded-xl hover:bg-green-500 text-white w-28"
-        >
-          Importar
-        </button>
-      </div>
-      <!-- Sección de ingreso de nombre de usuario -->
-      <div v-if="!userExists" class="mb-8">
-        <h2 class="text-2xl font-bold mb-4">Ingresa tu nombre de usuario</h2>
-        <input
-          v-model="username"
-          type="text"
-          placeholder="Nombre de usuario"
-          class="p-2 w-full rounded bg-gray-700 text-white"
-        />
-        <button
-          @click="saveUsername"
-          class="mt-4 w-full bg-blue-600 p-2 rounded hover:bg-blue-500"
-        >
-          Guardar
-        </button>
-      </div>
-
-      <!-- Historial total -->
-      <div v-if="userExists" class="mb-8">
-        <h2 class="text-xl font-bold mb-4 text-white">Total History</h2>
-        <div class="grid grid-cols-4 gap-4">
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Total kills</strong> <span>{{ totalStats.kills }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Total deaths:</strong>
-            <span>{{ totalStats.deaths }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Total assists:</strong>
-            <span>{{ totalStats.assists }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Total Damage:</strong> <span>{{ totalStats.damage }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>K/D:</strong> <span>{{ totalStats.kd }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>K/D/A:</strong> <span>{{ totalStats.kda }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Win %:</strong> <span>{{ totalStats.winRate }}%</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Average Damage:</strong>
-            <span>{{ totalStats.damageRate }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="p-1 bg-gray-700 rounded mb-5"></div>
-
-      <!-- Historial diario -->
-      <div v-if="userExists" class="mb-8">
-        <h2 class="text-xl font-bold mb-4 text-white">Daily History</h2>
-        <div class="grid grid-cols-3 gap-4">
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Daily Kills:</strong> <span>{{ dailyStats.kills }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Daily Deaths:</strong>
-            <span>{{ dailyStats.deaths }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Daily Assists:</strong>
-            <span>{{ dailyStats.assists }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Daily Damage:</strong> <span>{{ dailyStats.damage }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>K/D:</strong> <span>{{ dailyStats.kd }}</span>
-          </div>
-          <div
-            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>K/D/A:</strong> <span>{{ dailyStats.kda }}</span>
-          </div>
-          <div
-            class="flex items-center justify-start space-x-3 p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
-          >
-            <strong>Points Obtained:</strong>
-            <span
-              class="p-2 rounded"
-              :class="dailyStats.points >= 0 ? 'bg-green-500' : 'bg-red-500'"
-              >{{ dailyStats.points }}</span
-            >
-          </div>
-        </div>
-      </div>
-      <div class="p-1 bg-gray-700 rounded mb-5"></div>
-      <!-- Inputs para ingresar datos diarios -->
-      <div v-if="userExists" class="mb-8">
-        <h2 class="text-xl font-bold mb-4 text-white">Enter Daily Data</h2>
-        <form class="grid grid-cols-3 gap-4">
-          <div class="flex flex-col">
-            <label class="text-white">Kills:</label>
-            <input
-              v-model.number="inputStats.kills"
-              type="number"
-              class="p-2 rounded bg-gray-700 text-white"
-            />
-          </div>
-          <div class="flex flex-col">
-            <label class="text-white">Deaths:</label>
-            <input
-              v-model.number="inputStats.deaths"
-              type="number"
-              class="p-2 rounded bg-gray-700 text-white"
-            />
-          </div>
-          <div class="flex flex-col">
-            <label class="text-white">Assists:</label>
-            <input
-              v-model.number="inputStats.assists"
-              type="number"
-              class="p-2 rounded bg-gray-700 text-white"
-            />
-          </div>
-          <div class="flex flex-col">
-            <label class="text-white">Damage:</label>
-            <input
-              v-model.number="inputStats.damage"
-              type="number"
-              class="p-2 rounded bg-gray-700 text-white"
-            />
-          </div>
-          <div class="flex flex-col">
-            <label class="text-white">Points:</label>
-            <input
-              v-model.number="inputStats.points"
-              type="number"
-              class="p-2 rounded bg-gray-700 text-white"
-            />
-          </div>
-        </form>
-        <button
-          type="submit"
-          :click="saveDailyStats"
-          class="col-span-2 bg-blue-600 p-2 rounded-full hover:bg-blue-500 text-white text-xl w-full mt-3"
-        >
-          Save
-        </button>
-      </div>
-      <div class="p-1 bg-gray-700 rounded mb-5"></div>
-      <!-- Historial de ranks en formato de cards -->
-      <div v-if="userExists">
-        <h2 class="text-xl font-bold mb-4 text-white">Rank History</h2>
-        <div class="space-y-4 overflow-y-auto max-h-96">
-          <div
-            v-for="rank in rankHistory"
-            :key="rank.date"
-            :class="rank.points >= 0 ? 'bg-green-500' : 'bg-red-500'"
-            class="flex items-start justify-start bg-gray-700 space-x-3 p-4 rounded-lg shadow-lg hover:cursor-pointer"
-          >
-            <div class="p-5 bg-slate-300 rounded-full"></div>
-            <div class="flex flex-col items-start justify-start">
-              <div>
-                {{ rank.points }}
-                <strong class="ml-1">KDA</strong> {{ rank.kills }}/{{
-                  rank.deaths
-                }}/{{ rank.assists }}
-              </div>
-              <div class=""><strong>Damage:</strong> {{ rank.damage }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
   import { ref, onMounted } from "vue";
 
@@ -437,5 +214,225 @@
     initDB();
   });
 </script>
+<template>
+  <div class="flex justify-center p-10">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-4xl w-full">
+      <!-- Botones flotantes -->
+      <div class="fixed right-10 top-10 transform -translate-y-1/2 space-x-5">
+        <button
+          @click="exportData"
+          class="bg-red-600 p-2 rounded-xl hover:bg-red-500 text-white w-28"
+        >
+          Export
+        </button>
+        <input
+          type="file"
+          id="importFile"
+          ref="fileInput"
+          @change="importData"
+          hidden
+        />
+        <button
+          @click="triggerFileInput"
+          class="bg-green-600 p-2 rounded-xl hover:bg-green-500 text-white w-28"
+        >
+          Import
+        </button>
+      </div>
+      <!-- Sección de ingreso de nombre de usuario -->
+      <div v-if="!userExists" class="mb-8">
+        <h2 class="text-2xl font-bold mb-4">Ingresa tu nombre de usuario</h2>
+        <input
+          v-model="username"
+          type="text"
+          placeholder="Nombre de usuario"
+          class="p-2 w-full rounded bg-gray-700 text-white"
+        />
+        <button
+          @click="saveUsername"
+          class="mt-4 w-full bg-blue-600 p-2 rounded hover:bg-blue-500"
+        >
+          Guardar
+        </button>
+      </div>
 
-<style scoped></style>
+      <!-- Historial total -->
+      <div v-if="userExists" class="mb-8">
+        <h2 class="text-xl font-bold mb-4 text-white">Total History</h2>
+        <div class="grid grid-cols-4 gap-4">
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Total kills</strong> <span>{{ totalStats.kills }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Total deaths:</strong>
+            <span>{{ totalStats.deaths }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Total assists:</strong>
+            <span>{{ totalStats.assists }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Total Damage:</strong> <span>{{ totalStats.damage }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>K/D:</strong> <span>{{ totalStats.kd }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>K/D/A:</strong> <span>{{ totalStats.kda }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Win %:</strong> <span>{{ totalStats.winRate }}%</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Average Damage:</strong>
+            <span>{{ totalStats.damageRate }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="p-1 bg-gray-700 rounded mb-5"></div>
+
+      <!-- Historial diario -->
+      <div v-if="userExists" class="mb-8">
+        <h2 class="text-xl font-bold mb-4 text-white">Daily History</h2>
+        <div class="grid grid-cols-3 gap-4">
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Daily Kills:</strong> <span>{{ dailyStats.kills }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Daily Deaths:</strong>
+            <span>{{ dailyStats.deaths }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Daily Assists:</strong>
+            <span>{{ dailyStats.assists }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Daily Damage:</strong> <span>{{ dailyStats.damage }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>K/D:</strong> <span>{{ dailyStats.kd }}</span>
+          </div>
+          <div
+            class="flex flex-col items-start justify-start p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>K/D/A:</strong> <span>{{ dailyStats.kda }}</span>
+          </div>
+          <div
+            class="flex items-center justify-start space-x-3 p-2 bg-gray-900 rounded-lg text-white hover:cursor-pointer hover:bg-gray-700"
+          >
+            <strong>Points Obtained:</strong>
+            <span
+              class="p-2 rounded"
+              :class="dailyStats.points >= 0 ? 'bg-green-500' : 'bg-red-500'"
+              >{{ dailyStats.points }}</span
+            >
+          </div>
+        </div>
+      </div>
+      <div class="p-1 bg-gray-700 rounded mb-5"></div>
+      <!-- Inputs para ingresar datos diarios -->
+      <div v-if="userExists" class="mb-8">
+        <h2 class="text-xl font-bold mb-4 text-white">Enter Daily Data</h2>
+        <form class="grid grid-cols-3 gap-4">
+          <div class="flex flex-col">
+            <label class="text-white">Kills:</label>
+            <input
+              v-model.number="inputStats.kills"
+              type="number"
+              class="p-2 rounded bg-gray-700 text-white"
+            />
+          </div>
+          <div class="flex flex-col">
+            <label class="text-white">Deaths:</label>
+            <input
+              v-model.number="inputStats.deaths"
+              type="number"
+              class="p-2 rounded bg-gray-700 text-white"
+            />
+          </div>
+          <div class="flex flex-col">
+            <label class="text-white">Assists:</label>
+            <input
+              v-model.number="inputStats.assists"
+              type="number"
+              class="p-2 rounded bg-gray-700 text-white"
+            />
+          </div>
+          <div class="flex flex-col">
+            <label class="text-white">Damage:</label>
+            <input
+              v-model.number="inputStats.damage"
+              type="number"
+              class="p-2 rounded bg-gray-700 text-white"
+            />
+          </div>
+          <div class="flex flex-col">
+            <label class="text-white">Points:</label>
+            <input
+              v-model.number="inputStats.points"
+              type="number"
+              class="p-2 rounded bg-gray-700 text-white"
+            />
+          </div>
+        </form>
+        <button
+          type="submit"
+          :click="saveDailyStats"
+          class="col-span-2 bg-blue-600 p-2 rounded-full hover:bg-blue-500 text-white text-xl w-full mt-3"
+        >
+          Save
+        </button>
+      </div>
+      <div class="p-1 bg-gray-700 rounded mb-5"></div>
+      <!-- Historial de ranks en formato de cards -->
+      <div v-if="userExists">
+        <h2 class="text-xl font-bold mb-4 text-white">Rank History</h2>
+        <div class="space-y-4 overflow-y-auto max-h-96">
+          <div
+            v-for="rank in rankHistory"
+            :key="rank.date"
+            :class="rank.points >= 0 ? 'bg-green-500' : 'bg-red-500'"
+            class="flex items-start justify-start bg-gray-700 space-x-3 p-4 rounded-lg shadow-lg hover:cursor-pointer"
+          >
+            <div class="p-5 bg-slate-300 rounded-full"></div>
+            <div class="flex flex-col items-start justify-start">
+              <div>
+                {{ rank.points }}
+                <strong class="ml-1">KDA</strong> {{ rank.kills }}/{{
+                  rank.deaths
+                }}/{{ rank.assists }}
+              </div>
+              <div class=""><strong>Damage:</strong> {{ rank.damage }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

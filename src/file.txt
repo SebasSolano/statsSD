@@ -1,5 +1,0 @@
-Ahora realiza lo sisguiente:
-
-1- Recoge las ranks que tengan la misma fecha que el computador y todos sus datos sácale el promedio para asi mostrar el historial diario. en kills debes hacer una suma, en deaths, assists y damage igual, en kd debes hacer una división de kills/deaths en kda es un promedio, suma kill, deaths y assists  y luego divide entre 3 y points debe ser un calculo suma o resta dependiendo del valor si es positivo o negativo.
-
-2- Vas a hacer lo mismo que el primer punto pero este para el historial total, aquí debes coger todas las ranks guardadas y hacer el mismo calculo solo que en winRate debes coger todas las ranks que que se ganaron o sea los points son positivos y sacarle el % del total de todas las rank, en damageRate debe ser el promedio de damage por rank.
