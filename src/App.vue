@@ -221,7 +221,7 @@
   });
 </script>
 <template>
-  <div class="flex justify-center p-10">
+  <div class="flex justify-center p-10 h-full bg-image">
     <div class="bg-gray-800 p-8 rounded-lg shadow-lg max-w-4xl w-full">
       <!-- Botones flotantes -->
       <div class="fixed right-10 top-10 transform -translate-y-1/2 space-x-5">
